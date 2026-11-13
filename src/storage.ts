@@ -51,6 +51,28 @@ export class PersonStore {
     return person;
   }
 
+  // Змінює дані людини. Повертає false, якщо людину не знайдено.
+  update(id: string, data: PersonData): boolean {
+    const index = this.people.findIndex((p) => p.id === id);
+    if (index === -1) {
+      return false;
+    }
+    // id і дату додавання не змінюємо
+    this.people[index] = { ...this.people[index], ...data };
+    this.save();
+    return true;
+  }
+
+  remove(id: string): boolean {
+    const before = this.people.length;
+    this.people = this.people.filter((p) => p.id !== id);
+    if (this.people.length === before) {
+      return false;
+    }
+    this.save();
+    return true;
+  }
+
   private save(): void {
     localStorage.setItem(this.storageKey, JSON.stringify(this.people));
   }
