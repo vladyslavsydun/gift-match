@@ -169,3 +169,61 @@ select,
   background: #ffebee;
   color: #c62828;
 }
+
+.person-buttons {
+  margin-top: 8px;
+}
+
+/* ---------- Рекомендації ---------- */
+
+.gift {
+  border-bottom: 1px solid #eee;
+  padding: 14px 0;
+}
+
+.gift-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gift-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.gift-score {
+  font-size: 18px;
+  font-weight: bold;
+  color: #6c4ce0;
+}
+
+.progress {
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 6px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #6c4ce0;
+  border-radius: 4px;
+}
+
+.gift-desc {
+  color: #444;
+}
+
+.reasons {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0;
+  color: #2e7d32;
+  font-size: 14px;
+}
+
+.mp-btn {
+  text-decoration: none;
+  margin-right: 4px;
+}
