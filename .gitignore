@@ -1,0 +1,14 @@
+# залежності
+node_modules/
+
+# результат збірки
+dist/
+
+# логи
+*.log
+npm-debug.log*
+
+# налаштування редакторів
+.vscode/
+.idea/
+.DS_Store
