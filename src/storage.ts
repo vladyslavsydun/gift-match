@@ -76,11 +76,14 @@ export class PersonStore {
 
   // Пошук за ім'ям або хобі
   search(query: string): Person[] {
-    const q = query.trim();
+    // порівнюємо в нижньому регістрі, щоб "ОЛЕНА" і "олена" знаходили "Олена"
+    const q = query.trim().toLowerCase();
     if (q === '') {
       return this.getAll();
     }
-    return this.people.filter((p) => p.name.includes(q) || p.hobbies.some((h) => h.includes(q)));
+    return this.people.filter(
+      (p) => p.name.toLowerCase().includes(q) || p.hobbies.some((h) => h.toLowerCase().includes(q))
+    );
   }
 
   // Повертає список людей у вигляді JSON-тексту (для збереження у файл)
