@@ -29,8 +29,8 @@ export function scoreGift(person: Person, gift: Gift): Recommendation {
   } else {
     const matched = person.hobbies.filter((h) => gift.hobbies.includes(h));
     if (matched.length > 0) {
-      // 1 збіг = 0.8, 2 збіги = 1.0
-      hobbyScore = 0.6 + 0.2 * matched.length;
+      // 1 збіг = 0.8, 2 і більше збігів = 1.0 (більше 1 бути не може)
+      hobbyScore = Math.min(1, 0.6 + 0.2 * matched.length);
       reasons.push('Підходить під хобі: ' + matched.join(', '));
     }
   }
