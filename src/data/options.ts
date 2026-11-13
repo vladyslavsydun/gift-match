@@ -41,3 +41,7 @@ export const GENDER_LABELS: Record<string, string> = {
 };
 
 export const MAX_HOBBIES = 5;
+
+// межі бюджету, грн
+export const MIN_BUDGET = 50;
+export const MAX_BUDGET = 100000;

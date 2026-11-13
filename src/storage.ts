@@ -58,8 +58,10 @@ export class PersonStore {
     if (index === -1) {
       return false;
     }
-    // id і дату додавання не змінюємо
-    this.people[index] = { ...this.people[index], ...data };
+    // id і дату додавання не змінюємо.
+    // Беремо тільки нові дані, щоб видалений бюджет не залишився від старого запису.
+    const old = this.people[index];
+    this.people[index] = { ...data, id: old.id, createdAt: old.createdAt };
     this.save();
     return true;
   }
@@ -127,6 +129,7 @@ export class PersonStore {
           gender: item.gender,
           profession: item.profession,
           hobbies: item.hobbies,
+          budget: typeof item.budget === 'number' ? item.budget : undefined,
           createdAt: typeof item.createdAt === 'number' ? item.createdAt : Date.now(),
         });
       }

@@ -10,6 +10,7 @@ export interface Person {
   gender: Gender;
   profession: string;
   hobbies: string[];
+  budget?: number; // максимальна ціна подарунка, грн (необов'язково) - додано у версії 1.1
   createdAt: number; // дата додавання (мілісекунди)
 }
 
