@@ -232,3 +232,19 @@ select,
   border-color: #c62828;
   color: #c62828;
 }
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.toolbar #search {
+  flex: 2;
+  margin-top: 0;
+}
+
+.toolbar select {
+  flex: 1;
+  margin-top: 0;
+}
