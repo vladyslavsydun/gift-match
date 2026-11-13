@@ -19,6 +19,7 @@ const clickStats = new ClickStats();
 const form = document.getElementById('person-form') as HTMLFormElement;
 const nameInput = document.getElementById('name') as HTMLInputElement;
 const ageInput = document.getElementById('age') as HTMLInputElement;
+const budgetInput = document.getElementById('budget') as HTMLInputElement;
 const professionSelect = document.getElementById('profession') as HTMLSelectElement;
 const hobbiesBox = document.getElementById('hobbies') as HTMLDivElement;
 const errorsBox = document.getElementById('form-errors') as HTMLDivElement;
@@ -79,13 +80,18 @@ function readForm(): PersonData {
     hobbies.push(cb.value);
   });
 
-  return {
+  const data: PersonData = {
     name: nameInput.value,
     age: Number(ageInput.value),
     gender: gender as Gender,
     profession: professionSelect.value,
     hobbies: hobbies,
   };
+  // бюджет додаємо тільки якщо поле заповнене
+  if (budgetInput.value.trim() !== '') {
+    data.budget = Number(budgetInput.value);
+  }
+  return data;
 }
 
 function showErrors(errors: string[]): void {
@@ -105,6 +111,7 @@ function clearForm(): void {
 function fillForm(p: Person): void {
   nameInput.value = p.name;
   ageInput.value = String(p.age);
+  budgetInput.value = p.budget !== undefined ? String(p.budget) : '';
   (document.querySelector(`input[name="gender"][value="${p.gender}"]`) as HTMLInputElement).checked = true;
   professionSelect.value = p.profession;
   document.querySelectorAll<HTMLInputElement>('input[name="hobby"]').forEach((cb) => {
@@ -173,7 +180,7 @@ function personCard(p: Person): string {
   return `
     <div class="person">
       <div class="person-title">${escapeHtml(p.name)}, ${p.age}</div>
-      <div class="person-info">${p.profession} · ${GENDER_LABELS[p.gender]}</div>
+      <div class="person-info">${p.profession} · ${GENDER_LABELS[p.gender]}${p.budget !== undefined ? ' · бюджет до ' + p.budget + ' грн' : ''}</div>
       <div>${hobbies}</div>
       <div class="person-buttons">
         <button class="btn btn-primary" data-action="recommend" data-id="${p.id}">🎁 Підібрати подарунок</button>
@@ -221,10 +228,16 @@ function showRecommendations(personId: string): void {
   }
 
   recTitle.textContent = `Подарунки для: ${person.name} (${person.age}, ${person.profession})`;
+  if (person.budget !== undefined) {
+    recTitle.textContent += ` · бюджет до ${person.budget} грн`;
+  }
   const recommendations = recommend(person, GIFTS);
 
   if (recommendations.length === 0) {
     recList.innerHTML = '<p class="empty">На жаль, нічого не знайдено.</p>';
+    if (person.budget !== undefined) {
+      recList.innerHTML += '<p class="empty">Спробуйте збільшити бюджет.</p>';
+    }
   } else {
     recList.innerHTML = recommendations
       .map((r, index) => {

@@ -309,3 +309,9 @@ select,
     gap: 8px;
   }
 }
+
+.hint {
+  font-weight: normal;
+  color: #888;
+  font-size: 13px;
+}

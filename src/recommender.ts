@@ -73,8 +73,10 @@ export function scoreGift(person: Person, gift: Gift): Recommendation {
 }
 
 // Повертає найкращі подарунки для людини (за замовчуванням 5).
+// Якщо в людини вказаний бюджет - дорожчі подарунки не показуємо.
 export function recommend(person: Person, gifts: Gift[], limit = 5): Recommendation[] {
   return gifts
+    .filter((gift) => person.budget === undefined || gift.price <= person.budget)
     .map((gift) => scoreGift(person, gift))
     .filter((r) => r.score > 0)
     .sort((a, b) => b.score - a.score)

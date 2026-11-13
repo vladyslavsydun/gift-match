@@ -70,6 +70,19 @@ describe('recommender', () => {
     expect(r.reasons).toContain('Підходить під хобі: малювання, фотографія');
   });
 
+  it('з бюджетом 1000 грн немає подарунків дорожче 1000 (v1.1)', () => {
+    const result = recommend({ ...olena, budget: 1000 }, GIFTS);
+    expect(result.length).toBeGreaterThan(0);
+    for (const r of result) {
+      expect(r.gift.price).toBeLessThanOrEqual(1000);
+    }
+  });
+
+  it('без бюджету можуть бути дорогі подарунки (v1.1)', () => {
+    const result = recommend(olena, GIFTS);
+    expect(result.some((r) => r.gift.price > 1000)).toBe(true);
+  });
+
   it('якщо каталог порожній - повертає порожній масив', () => {
     expect(recommend(olena, [])).toEqual([]);
   });
