@@ -24,6 +24,10 @@ describe('validatePerson', () => {
     expect(validatePerson({ ...good, age: 121 }).length).toBe(1);
   });
 
+  it('дробовий вік (25.5) - помилка (BUG-1)', () => {
+    expect(validatePerson({ ...good, age: 25.5 })).toContain('Вік має бути цілим числом від 1 до 120');
+  });
+
   it('без хобі - помилка', () => {
     expect(validatePerson({ ...good, hobbies: [] })).toContain('Оберіть хоча б одне хобі');
   });
