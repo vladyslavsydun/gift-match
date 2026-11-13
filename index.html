@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GiftMatch — підбір подарунків</title>
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo">🎁 GiftMatch</div>
+      <nav class="nav">
+        <button class="nav-btn active" data-page="people">Люди</button>
+        <button class="nav-btn" data-page="stats">Статистика</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <!-- Екран 1: Люди -->
+      <section id="page-people" class="page">
+        <div class="columns">
+          <div class="card">
+            <h2 id="form-title">Додати людину</h2>
+            <form id="person-form" novalidate>
+              <label>Ім'я
+                <input type="text" id="name" placeholder="Наприклад, Олена" />
+              </label>
+
+              <label>Вік
+                <input type="number" id="age" min="1" max="120" placeholder="25" />
+              </label>
+
+              <div class="field">
+                <span>Стать</span>
+                <div class="radio-group">
+                  <label><input type="radio" name="gender" value="male" checked /> чоловіча</label>
+                  <label><input type="radio" name="gender" value="female" /> жіноча</label>
+                  <label><input type="radio" name="gender" value="other" /> інша</label>
+                </div>
+              </div>
+
+              <label>Професія
+                <select id="profession"></select>
+              </label>
+
+              <div class="field">
+                <span>Хобі (від 1 до 5)</span>
+                <div id="hobbies" class="checkbox-grid"></div>
+              </div>
+
+              <div id="form-errors" class="errors"></div>
+
+              <div class="form-buttons">
+                <button type="submit" id="submit-btn" class="btn btn-primary">Додати</button>
+                <button type="button" id="cancel-btn" class="btn hidden">Скасувати</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Список людей (<span id="people-count">0</span>)</h2>
+            <div class="toolbar">
+              <input type="text" id="search" placeholder="🔍 Пошук за ім'ям або хобі" />
+              <select id="sort">
+                <option value="newest">Спочатку нові</option>
+                <option value="name">За ім'ям</option>
+                <option value="age">За віком</option>
+              </select>
+            </div>
+            <div id="people-list"></div>
+            <div class="toolbar">
+              <button id="export-btn" class="btn">Експорт JSON</button>
+              <label class="btn">
+                Імпорт JSON
+                <input type="file" id="import-input" accept=".json,application/json" hidden />
+              </label>
+            </div>
+            <div id="message" class="message hidden"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Екран 2: Рекомендації -->
+      <section id="page-recommendations" class="page hidden">
+        <div class="card">
+          <button id="back-btn" class="btn">← Назад</button>
+          <h2 id="rec-title">Подарунки</h2>
+          <div id="rec-list"></div>
+        </div>
+      </section>
+
+      <!-- Екран 3: Статистика -->
+      <section id="page-stats" class="page hidden">
+        <div id="stats-content"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      Навчальний проєкт · Основи програмної інженерії · 2026
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
