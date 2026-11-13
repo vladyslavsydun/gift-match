@@ -83,6 +83,7 @@ form.addEventListener('submit', (event) => {
     return;
   }
 
+  data.name = data.name.trim();
   store.add(data);
   showMessage('Людину додано');
   clearForm();
