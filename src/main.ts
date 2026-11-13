@@ -8,6 +8,7 @@ import { GIFTS } from './data/gifts';
 import { recommend } from './recommender';
 import { MARKETPLACES, buildMarketplaceUrl } from './marketplaces';
 import { ClickStats, getTopHobby } from './stats';
+import { escapeHtml } from './utils';
 
 // Головний файл. Тут вся робота з інтерфейсом (HTML).
 
@@ -171,7 +172,7 @@ function personCard(p: Person): string {
   const hobbies = p.hobbies.map((h) => `<span class="tag">#${h}</span>`).join(' ');
   return `
     <div class="person">
-      <div class="person-title">${p.name}, ${p.age}</div>
+      <div class="person-title">${escapeHtml(p.name)}, ${p.age}</div>
       <div class="person-info">${p.profession} · ${GENDER_LABELS[p.gender]}</div>
       <div>${hobbies}</div>
       <div class="person-buttons">
