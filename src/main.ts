@@ -7,10 +7,12 @@ import { validatePerson } from './validation';
 import { GIFTS } from './data/gifts';
 import { recommend } from './recommender';
 import { MARKETPLACES, buildMarketplaceUrl } from './marketplaces';
+import { ClickStats, getTopHobby } from './stats';
 
 // Головний файл. Тут вся робота з інтерфейсом (HTML).
 
 const store = new PersonStore();
+const clickStats = new ClickStats();
 
 // Елементи сторінки
 const form = document.getElementById('person-form') as HTMLFormElement;
@@ -26,6 +28,9 @@ const searchInput = document.getElementById('search') as HTMLInputElement;
 const sortSelect = document.getElementById('sort') as HTMLSelectElement;
 const recTitle = document.getElementById('rec-title') as HTMLHeadingElement;
 const recList = document.getElementById('rec-list') as HTMLDivElement;
+const statsContent = document.getElementById('stats-content') as HTMLDivElement;
+const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
+const importInput = document.getElementById('import-input') as HTMLInputElement;
 const formTitle = document.getElementById('form-title') as HTMLHeadingElement;
 const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
 const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
@@ -46,7 +51,11 @@ function showPage(page: string): void {
 
 document.querySelectorAll('.nav-btn').forEach((btn) => {
   btn.addEventListener('click', () => {
-    showPage((btn as HTMLElement).dataset.page || 'people');
+    const page = (btn as HTMLElement).dataset.page || 'people';
+    if (page === 'stats') {
+      renderStats();
+    }
+    showPage(page);
   });
 });
 
@@ -243,6 +252,77 @@ function showRecommendations(personId: string): void {
 }
 
 document.getElementById('back-btn')?.addEventListener('click', () => showPage('people'));
+
+// Рахуємо переходи на маркетплейси (посилання відкривається саме, ми тільки рахуємо)
+recList.addEventListener('click', (event) => {
+  const link = (event.target as HTMLElement).closest('a');
+  if (link && link.dataset.mp) {
+    clickStats.registerClick(link.dataset.mp);
+  }
+});
+
+// ---------- Статистика ----------
+
+function renderStats(): void {
+  const people = store.getAll();
+  const topHobby = getTopHobby(people);
+  const total = clickStats.getTotal();
+
+  // найбільше значення - для ширини смужок
+  const max = Math.max(1, ...MARKETPLACES.map((m) => clickStats.getCount(m.id)));
+
+  const rows = MARKETPLACES.map((m) => {
+    const count = clickStats.getCount(m.id);
+    const width = Math.round((count / max) * 100);
+    return `
+      <div class="stat-row">
+        <span class="stat-name">${m.name}</span>
+        <div class="progress stat-bar"><div class="progress-bar" style="width: ${width}%"></div></div>
+        <span class="stat-value">${count}</span>
+      </div>`;
+  }).join('');
+
+  statsContent.innerHTML = `
+    <div class="stat-cards">
+      <div class="card stat-card"><div class="stat-label">Людей у списку</div><div class="stat-number">${people.length}</div></div>
+      <div class="card stat-card"><div class="stat-label">Найпопулярніше хобі</div><div class="stat-number">${topHobby || '—'}</div></div>
+      <div class="card stat-card"><div class="stat-label">Подарунків у каталозі</div><div class="stat-number">${GIFTS.length}</div></div>
+    </div>
+    <div class="card">
+      <h2>Переходи на маркетплейси (всього: ${total})</h2>
+      ${rows}
+    </div>`;
+}
+
+// ---------- Експорт / імпорт ----------
+
+exportBtn.addEventListener('click', () => {
+  const blob = new Blob([store.exportJson()], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'giftmatch-people.json';
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+
+importInput.addEventListener('change', () => {
+  const file = importInput.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const added = store.importJson(String(reader.result));
+      showMessage('Імпортовано людей: ' + added);
+      renderPeople();
+    } catch (e) {
+      showMessage((e as Error).message, true);
+    }
+    importInput.value = ''; // щоб можна було вибрати той самий файл ще раз
+  };
+  reader.onerror = () => showMessage('Не вдалося прочитати файл', true);
+  reader.readAsText(file);
+});
 
 // ---------- Повідомлення ----------
 
