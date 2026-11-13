@@ -1,4 +1,5 @@
 import type { Person, PersonData } from './types';
+import { validatePerson } from './validation';
 
 // Клас для роботи зі списком людей.
 // Всі дані зберігаються в localStorage браузера.
@@ -80,6 +81,57 @@ export class PersonStore {
       return this.getAll();
     }
     return this.people.filter((p) => p.name.includes(q) || p.hobbies.some((h) => h.includes(q)));
+  }
+
+  // Повертає список людей у вигляді JSON-тексту (для збереження у файл)
+  exportJson(): string {
+    return JSON.stringify(this.people, null, 2);
+  }
+
+  // Додає людей з JSON-тексту. Повертає, скільки людей додано.
+  // Якщо файл неправильний - кидає помилку і нічого не змінює.
+  importJson(json: string): number {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(json);
+    } catch {
+      throw new Error('Файл має неправильний формат');
+    }
+
+    if (!Array.isArray(parsed)) {
+      throw new Error('Файл має неправильний формат');
+    }
+
+    // спочатку перевіряємо всі записи, і тільки потім додаємо
+    const toAdd: Person[] = [];
+    for (const item of parsed) {
+      if (
+        typeof item !== 'object' || item === null ||
+        typeof item.id !== 'string' ||
+        typeof item.name !== 'string' ||
+        typeof item.age !== 'number' ||
+        !Array.isArray(item.hobbies) ||
+        validatePerson(item).length > 0
+      ) {
+        throw new Error('Файл має неправильний формат');
+      }
+      // людей, які вже є в списку, не дублюємо
+      if (!this.getById(item.id)) {
+        toAdd.push({
+          id: item.id,
+          name: item.name,
+          age: item.age,
+          gender: item.gender,
+          profession: item.profession,
+          hobbies: item.hobbies,
+          createdAt: typeof item.createdAt === 'number' ? item.createdAt : Date.now(),
+        });
+      }
+    }
+
+    this.people.push(...toAdd);
+    this.save();
+    return toAdd.length;
   }
 
   private save(): void {
