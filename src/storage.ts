@@ -73,7 +73,31 @@ export class PersonStore {
     return true;
   }
 
+  // Пошук за ім'ям або хобі
+  search(query: string): Person[] {
+    const q = query.trim();
+    if (q === '') {
+      return this.getAll();
+    }
+    return this.people.filter((p) => p.name.includes(q) || p.hobbies.some((h) => h.includes(q)));
+  }
+
   private save(): void {
     localStorage.setItem(this.storageKey, JSON.stringify(this.people));
   }
+}
+
+export type SortMode = 'newest' | 'name' | 'age';
+
+// Сортування списку людей (повертає новий масив)
+export function sortPeople(people: Person[], mode: SortMode): Person[] {
+  const result = [...people];
+  if (mode === 'name') {
+    result.sort((a, b) => a.name.localeCompare(b.name, 'uk'));
+  } else if (mode === 'age') {
+    result.sort((a, b) => a.age - b.age);
+  } else {
+    result.sort((a, b) => b.createdAt - a.createdAt);
+  }
+  return result;
 }

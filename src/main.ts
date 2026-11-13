@@ -1,7 +1,8 @@
 import './style.css';
 import type { Gender, Person, PersonData } from './types';
 import { HOBBIES, PROFESSIONS, GENDER_LABELS } from './data/options';
-import { PersonStore } from './storage';
+import { PersonStore, sortPeople } from './storage';
+import type { SortMode } from './storage';
 import { validatePerson } from './validation';
 import { GIFTS } from './data/gifts';
 import { recommend } from './recommender';
@@ -21,6 +22,8 @@ const errorsBox = document.getElementById('form-errors') as HTMLDivElement;
 const peopleList = document.getElementById('people-list') as HTMLDivElement;
 const peopleCount = document.getElementById('people-count') as HTMLSpanElement;
 const messageBox = document.getElementById('message') as HTMLDivElement;
+const searchInput = document.getElementById('search') as HTMLInputElement;
+const sortSelect = document.getElementById('sort') as HTMLSelectElement;
 const recTitle = document.getElementById('rec-title') as HTMLHeadingElement;
 const recList = document.getElementById('rec-list') as HTMLDivElement;
 const formTitle = document.getElementById('form-title') as HTMLHeadingElement;
@@ -133,16 +136,27 @@ form.addEventListener('submit', (event) => {
 // ---------- Список людей ----------
 
 function renderPeople(): void {
-  const people = store.getAll();
-  peopleCount.textContent = String(people.length);
+  const all = store.getAll();
+  peopleCount.textContent = String(all.length);
+
+  if (all.length === 0) {
+    peopleList.innerHTML = '<p class="empty">Список порожній. Додайте першу людину.</p>';
+    return;
+  }
+
+  const found = store.search(searchInput.value);
+  const people = sortPeople(found, sortSelect.value as SortMode);
 
   if (people.length === 0) {
-    peopleList.innerHTML = '<p class="empty">Список порожній. Додайте першу людину.</p>';
+    peopleList.innerHTML = '<p class="empty">Нікого не знайдено.</p>';
     return;
   }
 
   peopleList.innerHTML = people.map((p) => personCard(p)).join('');
 }
+
+searchInput.addEventListener('input', () => renderPeople());
+sortSelect.addEventListener('change', () => renderPeople());
 
 function personCard(p: Person): string {
   const hobbies = p.hobbies.map((h) => `<span class="tag">#${h}</span>`).join(' ');
