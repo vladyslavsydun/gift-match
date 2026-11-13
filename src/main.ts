@@ -3,6 +3,9 @@ import type { Gender, Person, PersonData } from './types';
 import { HOBBIES, PROFESSIONS, GENDER_LABELS } from './data/options';
 import { PersonStore } from './storage';
 import { validatePerson } from './validation';
+import { GIFTS } from './data/gifts';
+import { recommend } from './recommender';
+import { MARKETPLACES, buildMarketplaceUrl } from './marketplaces';
 
 // Головний файл. Тут вся робота з інтерфейсом (HTML).
 
@@ -18,6 +21,8 @@ const errorsBox = document.getElementById('form-errors') as HTMLDivElement;
 const peopleList = document.getElementById('people-list') as HTMLDivElement;
 const peopleCount = document.getElementById('people-count') as HTMLSpanElement;
 const messageBox = document.getElementById('message') as HTMLDivElement;
+const recTitle = document.getElementById('rec-title') as HTMLHeadingElement;
+const recList = document.getElementById('rec-list') as HTMLDivElement;
 
 // ---------- Перемикання сторінок ----------
 
@@ -111,8 +116,65 @@ function personCard(p: Person): string {
       <div class="person-title">${p.name}, ${p.age}</div>
       <div class="person-info">${p.profession} · ${GENDER_LABELS[p.gender]}</div>
       <div>${hobbies}</div>
+      <div class="person-buttons">
+        <button class="btn btn-primary" data-action="recommend" data-id="${p.id}">🎁 Підібрати подарунок</button>
+      </div>
     </div>`;
 }
+
+// Кнопки на картках (одним обробником для всього списку)
+peopleList.addEventListener('click', (event) => {
+  const button = (event.target as HTMLElement).closest('button');
+  if (!button) return;
+  const id = button.dataset.id || '';
+
+  if (button.dataset.action === 'recommend') {
+    showRecommendations(id);
+  }
+});
+
+// ---------- Рекомендації ----------
+
+function showRecommendations(personId: string): void {
+  const person = store.getById(personId);
+  if (!person) {
+    showMessage('Людину не знайдено', true);
+    return;
+  }
+
+  recTitle.textContent = `Подарунки для: ${person.name} (${person.age}, ${person.profession})`;
+  const recommendations = recommend(person, GIFTS);
+
+  if (recommendations.length === 0) {
+    recList.innerHTML = '<p class="empty">На жаль, нічого не знайдено.</p>';
+  } else {
+    recList.innerHTML = recommendations
+      .map((r, index) => {
+        const reasons = r.reasons.map((text) => `<li>✓ ${text}</li>`).join('');
+        const links = MARKETPLACES.map(
+          (m) =>
+            `<a class="btn mp-btn" href="${buildMarketplaceUrl(m, r.gift.title)}" target="_blank" rel="noopener" data-mp="${m.id}">${m.name}</a>`
+        ).join(' ');
+
+        return `
+          <div class="gift">
+            <div class="gift-header">
+              <div class="gift-title">${index + 1}. ${r.gift.title}</div>
+              <div class="gift-score">${r.score}%</div>
+            </div>
+            <div class="progress"><div class="progress-bar" style="width: ${r.score}%"></div></div>
+            <div class="gift-desc">${r.gift.description} <b>~ ${r.gift.price} грн</b> · ${r.gift.category}</div>
+            <ul class="reasons">${reasons}</ul>
+            <div class="gift-links">Купити: ${links}</div>
+          </div>`;
+      })
+      .join('');
+  }
+
+  showPage('recommendations');
+}
+
+document.getElementById('back-btn')?.addEventListener('click', () => showPage('people'));
 
 // ---------- Повідомлення ----------
 

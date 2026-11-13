@@ -36,6 +36,10 @@ export class PersonStore {
     return [...this.people];
   }
 
+  getById(id: string): Person | undefined {
+    return this.people.find((p) => p.id === id);
+  }
+
   add(data: PersonData): Person {
     const person: Person = {
       ...data,
