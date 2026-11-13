@@ -11,7 +11,7 @@ export function validatePerson(data: PersonData): string[] {
     errors.push("Ім'я має містити від 2 до 50 символів");
   }
 
-  if (isNaN(data.age) || data.age < 1 || data.age > 120) {
+  if (!Number.isInteger(data.age) || data.age < 1 || data.age > 120) {
     errors.push('Вік має бути цілим числом від 1 до 120');
   }
 
