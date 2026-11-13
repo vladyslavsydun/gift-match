@@ -18,6 +18,12 @@ const errorsBox = document.getElementById('form-errors') as HTMLDivElement;
 const peopleList = document.getElementById('people-list') as HTMLDivElement;
 const peopleCount = document.getElementById('people-count') as HTMLSpanElement;
 const messageBox = document.getElementById('message') as HTMLDivElement;
+const formTitle = document.getElementById('form-title') as HTMLHeadingElement;
+const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
+
+// id людини, яку зараз редагуємо (null - режим додавання)
+let editingId: string | null = null;
 
 // ---------- Перемикання сторінок ----------
 
@@ -71,7 +77,31 @@ function showErrors(errors: string[]): void {
 function clearForm(): void {
   form.reset();
   showErrors([]);
+  editingId = null;
+  formTitle.textContent = 'Додати людину';
+  submitBtn.textContent = 'Додати';
+  cancelBtn.classList.add('hidden');
 }
+
+// Підставляє дані людини у форму для редагування
+function fillForm(p: Person): void {
+  nameInput.value = p.name;
+  ageInput.value = String(p.age);
+  (document.querySelector(`input[name="gender"][value="${p.gender}"]`) as HTMLInputElement).checked = true;
+  professionSelect.value = p.profession;
+  document.querySelectorAll<HTMLInputElement>('input[name="hobby"]').forEach((cb) => {
+    cb.checked = p.hobbies.includes(cb.value);
+  });
+
+  editingId = p.id;
+  formTitle.textContent = 'Редагувати: ' + p.name;
+  submitBtn.textContent = 'Зберегти зміни';
+  cancelBtn.classList.remove('hidden');
+  showErrors([]);
+  nameInput.focus();
+}
+
+cancelBtn.addEventListener('click', () => clearForm());
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -84,8 +114,13 @@ form.addEventListener('submit', (event) => {
   }
 
   data.name = data.name.trim();
-  store.add(data);
-  showMessage('Людину додано');
+  if (editingId) {
+    store.update(editingId, data);
+    showMessage('Зміни збережено');
+  } else {
+    store.add(data);
+    showMessage('Людину додано');
+  }
   clearForm();
   renderPeople();
 });
@@ -111,8 +146,36 @@ function personCard(p: Person): string {
       <div class="person-title">${p.name}, ${p.age}</div>
       <div class="person-info">${p.profession} · ${GENDER_LABELS[p.gender]}</div>
       <div>${hobbies}</div>
+      <div class="person-buttons">
+        <button class="btn" data-action="edit" data-id="${p.id}">Редагувати</button>
+        <button class="btn btn-danger" data-action="delete" data-id="${p.id}">Видалити</button>
+      </div>
     </div>`;
 }
+
+// Кнопки на картках (одним обробником для всього списку)
+peopleList.addEventListener('click', (event) => {
+  const button = (event.target as HTMLElement).closest('button');
+  if (!button) return;
+  const id = button.dataset.id || '';
+  const person = store.getById(id);
+  if (!person) return;
+
+  if (button.dataset.action === 'edit') {
+    fillForm(person);
+  }
+
+  if (button.dataset.action === 'delete') {
+    if (confirm('Видалити ' + person.name + '?')) {
+      store.remove(id);
+      if (editingId === id) {
+        clearForm();
+      }
+      showMessage('Видалено');
+      renderPeople();
+    }
+  }
+});
 
 // ---------- Повідомлення ----------
 
