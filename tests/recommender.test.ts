@@ -83,6 +83,40 @@ describe('recommender', () => {
     expect(result.some((r) => r.gift.price > 1000)).toBe(true);
   });
 
+  // ---- BUG-5: у багатьох подарунків був однаковий відсоток ----
+
+  it('подарунок тільки про хобі людини має більший бал, ніж подарунок про багато різних хобі (BUG-5)', () => {
+    const onlyDrawing: Gift = { ...perfectGift, hobbies: ['малювання'] };
+    const manyThings: Gift = { ...perfectGift, hobbies: ['малювання', 'спорт', 'кіно'] };
+    expect(scoreGift(olena, onlyDrawing).score).toBeGreaterThan(scoreGift(olena, manyThings).score);
+  });
+
+  it('подарунок під обидва хобі людини має більший бал, ніж під одне (BUG-5)', () => {
+    const bothHobbies: Gift = { ...perfectGift, hobbies: ['малювання', 'фотографія'] };
+    const oneHobby: Gift = { ...perfectGift, hobbies: ['малювання', 'кіно'] };
+    expect(scoreGift(olena, bothHobbies).score).toBeGreaterThan(scoreGift(olena, oneHobby).score);
+  });
+
+  it('вік ближче до середини вікового діапазону дає більший бал (BUG-5)', () => {
+    const middle: Gift = { ...perfectGift, minAge: 15, maxAge: 35 }; // середина 25
+    const edge: Gift = { ...perfectGift, minAge: 25, maxAge: 45 }; // 25 - на краю
+    expect(scoreGift(olena, middle).score).toBeGreaterThan(scoreGift(olena, edge).score);
+  });
+
+  it('подарунок для іншої професії не гірший, ніж подарунок для всіх (BUG-5)', () => {
+    const forTeacher: Gift = { ...perfectGift, professions: ['вчитель'] };
+    const forAll: Gift = { ...perfectGift, professions: [] };
+    expect(scoreGift(olena, forTeacher).score).toBe(scoreGift(olena, forAll).score);
+  });
+
+  it('для Олени (лікар, кулінарія і подорожі, бюджет 2000) у топ-5 не всі бали однакові (BUG-5)', () => {
+    const doctor: Person = { ...olena, profession: 'лікар', hobbies: ['кулінарія', 'подорожі'], budget: 2000 };
+    const result = recommend(doctor, GIFTS);
+    const differentScores = new Set(result.map((r) => r.score));
+    expect(result.length).toBe(5);
+    expect(differentScores.size).toBeGreaterThan(1);
+  });
+
   it('якщо каталог порожній - повертає порожній масив', () => {
     expect(recommend(olena, [])).toEqual([]);
   });
