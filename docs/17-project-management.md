@@ -95,7 +95,7 @@
 
 Як рухається картка: **To Do → In Progress** (створюю гілку) → **Review / Test** (відкрито Pull Request, перевіряю) → **Done** (злито в `main`). У GitHub Projects це можна автоматизувати: в *Workflows* увімкнути «Item closed → Done» і «Pull request merged → Done».
 
-Підсумок по спринтах: усі 4 спринти закрито, всі 11 User Stories в колонці **Done**, BUG-1…BUG-3 закриті, BUG-4 залишився в Backlog з пріоритетом Low.
+Підсумок по спринтах: усі 4 спринти закрито, всі 11 User Stories в колонці **Done**, BUG-1…BUG-3 закриті, BUG-4 залишився в Backlog з пріоритетом Low. Після спринтів, під час підготовки до захисту, знайдено BUG-5 (однаковий відсоток у подарунків, High) — його картка пройшла To Do → In Progress → Review / Test → Done, виправлено у версії 1.1.1.
 
 ## Результат
 
