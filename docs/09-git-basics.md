@@ -48,10 +48,10 @@ git init
 На GitHub створив порожній репозиторій **gift-match** (кнопка *New repository*, без README, бо README я створюю сам) і підключив його:
 
 ```bash
-git remote add origin https://github.com/[ваш-логін]/gift-match.git
+git remote add origin https://github.com/vladyslavsydun/gift-match.git
 ```
 
-Посилання на репозиторій: **https://github.com/[ваш-логін]/gift-match**
+Посилання на репозиторій: **https://github.com/vladyslavsydun/gift-match**
 
 ### 3. Створення .gitignore
 
@@ -97,7 +97,7 @@ git push -u origin main
 git pull
 
 # скопіювати репозиторій на інший комп'ютер
-git clone https://github.com/[ваш-логін]/gift-match.git
+git clone https://github.com/vladyslavsydun/gift-match.git
 ```
 
 `git status` показує, які файли змінені і ще не закомічені — я використовував її постійно.

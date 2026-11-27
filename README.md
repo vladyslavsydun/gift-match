@@ -3,7 +3,7 @@
 **Веб-застосунок, який допомагає підібрати подарунок для людини на основі її хобі, віку, статі та професії.**
 
 Навчальний проєкт з дисципліни «Основи програмної інженерії».
-Автор: [ПІБ студента], група [номер групи], 2026.
+Автор: Сидун Владислав, група ІПЗ-11, 2026.
 
 ![Головний екран](docs/screenshots/01-people.png)
 
@@ -63,7 +63,7 @@
 Потрібно: [Node.js](https://nodejs.org/) версії 18 або новіше.
 
 ```bash
-git clone https://github.com/[ваш-логін]/gift-match.git
+git clone https://github.com/vladyslavsydun/gift-match.git
 cd gift-match
 npm install
 npm run dev

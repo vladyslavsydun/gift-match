@@ -74,7 +74,7 @@ git push -u origin feature/footer-version
 ```html
 <footer class="footer">
   GiftMatch v1.1.1 · Навчальний проєкт · Основи програмної інженерії · 2026 ·
-  <a href="https://github.com/[ваш-логін]/gift-match" target="_blank">GitHub</a>
+  <a href="https://github.com/vladyslavsydun/gift-match" target="_blank">GitHub</a>
 </footer>
 ```
 
