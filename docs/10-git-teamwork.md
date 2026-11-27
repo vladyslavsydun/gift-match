@@ -59,7 +59,7 @@ git push -u origin feature/footer-version
 
 > 💬 У футері немає посилання на репозиторій. На захисті буде зручно, щоб можна було одразу перейти на GitHub. Додай посилання.
 
-Після цього натиснув **Review changes → Request changes**.
+Після цього натиснув **Finish your review → Comment → Submit review**. На власний Pull Request GitHub не дозволяє ставити «Request changes» чи «Approve», тому рев'ю я залишив у вигляді коментаря.
 
 Що я перевіряв під час рев'ю (свій маленький чек-лист):
 - зміна робить те, що написано в описі;
