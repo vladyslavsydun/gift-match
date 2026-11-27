@@ -48,7 +48,7 @@ git push -u origin feature/footer-version
 - **base:** `main` ← **compare:** `feature/footer-version`
 - **Назва:** Футер: назва і версія застосунку
 - **Опис:**
-  > Що зроблено: у футері тепер написано «GiftMatch v1.1.0», щоб на демонстрації було видно версію.
+  > Що зроблено: у футері тепер написано «GiftMatch v1.1.1», щоб на демонстрації було видно версію.
   > Як перевірити: `npm run dev`, прокрутити сторінку вниз.
 
 Посилання на PR: **[вставити посилання на Pull Request]**
@@ -73,7 +73,7 @@ git push -u origin feature/footer-version
 
 ```html
 <footer class="footer">
-  GiftMatch v1.1.0 · Навчальний проєкт · Основи програмної інженерії · 2026 ·
+  GiftMatch v1.1.1 · Навчальний проєкт · Основи програмної інженерії · 2026 ·
   <a href="https://github.com/[ваш-логін]/gift-match" target="_blank">GitHub</a>
 </footer>
 ```
